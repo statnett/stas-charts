@@ -1,0 +1,18 @@
+---
+name: Lint PR
+on:
+  pull_request_target:
+    types:
+      - opened
+      - edited
+      - synchronize
+
+permissions:
+  contents: read
+jobs:
+  trigger:
+    uses: statnett/github-workflows/.github/workflows/lint-pr.yaml@780be8cca54cd349710108097b04a201f345fbcc # main
+    permissions:
+      pull-requests: write
+      statuses: write
+      
