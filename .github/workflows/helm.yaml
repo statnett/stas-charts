@@ -21,7 +21,10 @@ jobs:
           version: 4.3.1
 
       - name: Lint
-        run: helm lint "$CHART_PATH"
+        run: |
+          for dir in $(find "$CHART_PATH" -mindepth 1 -maxdepth 1 -type d); do
+            helm lint "$dir"
+          done
 
       - name: Package chart
         run: helm package "$CHART_PATH"
