@@ -1,4 +1,4 @@
-name: helm-chart
+name: helm-chart-lint
 
 on: pull_request
 
