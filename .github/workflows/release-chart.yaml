@@ -40,20 +40,25 @@ jobs:
           fi
           echo "component=$(echo "$REF_NAME" | cut -d'/' -f 1)" >> "$GITHUB_OUTPUT"
           echo "version=$(echo "$REF_NAME" | cut -d'/' -f 2)" >> "$GITHUB_OUTPUT"
+          
+      - name: Package
+        env:
+          COMPONENT: ${{ steps.prep.outputs.component }}
+          VERSION: ${{ steps.prep.outputs.version }}
+        run: |
+          mkdir -p dist
+          helm package "charts/$COMPONENT" --destination dist
 
       - name: Push chart
         id: push
         env:
           COMPONENT: ${{ steps.prep.outputs.component }}
         run: |
-          set -euo pipefail
           repo="ghcr.io/${GITHUB_REPOSITORY,,}"
-          chart_name=$(helm show chart dist/*.tgz | awk '/^name:/ {print $2}')
           output=$(helm push dist/*.tgz "oci://$repo" 2>&1)
           echo "$output"
           digest=$(awk '/^Digest:/ {print $2}' <<< "$output")
-          [[ -n "$digest" ]] || { echo "Could not find digest"; exit 1; }
-          echo "digest-url=$repo/$chart_name@$digest" >> "$GITHUB_OUTPUT"
+          echo "digest-url=$repo/$COMPONENT@$digest" >> "$GITHUB_OUTPUT"
 
       - name: Sign chart
         run: cosign sign --yes "$DIGEST_URL"
