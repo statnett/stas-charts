@@ -1,3 +1,4 @@
+---
 name: release-chart
 
 on:
@@ -40,7 +41,7 @@ jobs:
           fi
           echo "component=$(echo "$REF_NAME" | cut -d'/' -f 1)" >> "$GITHUB_OUTPUT"
           echo "version=$(echo "$REF_NAME" | cut -d'/' -f 2)" >> "$GITHUB_OUTPUT"
-          
+
       - name: Package
         env:
           COMPONENT: ${{ steps.prep.outputs.component }}
